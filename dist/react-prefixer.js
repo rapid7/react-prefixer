@@ -72,23 +72,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var div = document.createElement("div");
 
-	function isPropertySupported(prop, value, defaultValue) {
-	    var temp = div.cloneNode();
+	function isPropertySupported(prop) {
+	    return typeof div.style[prop] === "string";
+	}
 
-	    temp.style[prop] = defaultValue;
+	function isValueSupported(prop, value, defaultValue) {
+	    div.style[prop] = defaultValue;
 
 	    try {
-	        temp.style[prop] = value;
+	        div.style[prop] = value;
 	    } catch (e) {}
 
-	    return temp.style[prop] === value;
+	    return div.style[prop] === value;
 	}
 
 	function applyPrefixes(obj) {
 	    Object.keys(obj).forEach(function (key) {
 	        if (typeof obj[key] === "object" && !!obj[key]) {
 	            obj[key] = applyPrefixes(obj[key]);
-	        } else if (_properties2["default"].indexOf(key) !== -1 && typeof div.style[key] !== "string") {
+	        } else if (_properties2["default"].indexOf(key) !== -1 && !isPropertySupported(key)) {
 	            var value = obj[key],
 	                prefixedKey = _prefix2["default"].js + key.charAt(0).toUpperCase() + key.slice(1);
 
@@ -98,7 +100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            delete obj[key];
 	            obj[prefixedKey] = value;
-	        } else if (key === "display" && obj[key] === "flex" && !isPropertySupported("display", "flex", "block")) {
+	        } else if (key === "display" && obj[key] === "flex" && !isValueSupported("display", "flex", "block")) {
 	            obj[key] = _prefix2["default"] === "ms" ? "-ms-flexbox" : _prefix2["default"].css + "flex";
 	        }
 	    });
@@ -141,7 +143,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports["default"] = ["alignContent", "alignItems", "alignSelf", "animation", "animationDelay", "animationDirection", "animationDuration", "animationFillMode", "animationIterationCount", "animationName", "animationPlayState", "animationTimingFunction", "appearance", "backfaceVisibility", "backgroundClip", "borderImage", "borderImageSlice", "boxShadow", "flex", "flexBasis", "flexDirection", "flexFlow", "flexGrow", "flexShrink", "flexWrap", "justifyContent", "perspective", "perspectiveOrigin", "transform", "transition", "transformOrigin", "transformStyle", "transitionProperty", "transitionDuration", "transitionTimingFunction", "transitionDelay", "userSelect"];
+	exports["default"] = ["alignContent", "alignItems", "alignSelf", "animation", "animationDelay", "animationDirection", "animationDuration", "animationFillMode", "animationIterationCount", "animationName", "animationPlayState", "animationTimingFunction", "appearance", "aspectRatio", "backfaceVisibility", "backgroundClip", "borderImage", "borderImageSlice", "boxShadow", "columnCount", "columnFill", "columnGap", "columnRule", "columnRuleColor", "columnRuleStyle", "columnRuleWidth", "columnSpan", "columnWidth", "columns", "flex", "flexBasis", "flexDirection", "flexFlow", "flexGrow", "flexShrink", "flexWrap", "fontFeatureSettings", "fontKearning", "fontVariantLigatures", "justifyContent", "grid", "gridArea", "gridAutoColumns", "gridAutoFlow", "gridAutoRows", "gridColumn", "gridColumnEnd", "gridColumnStart", "gridRow", "gridRowEnd", "gridRowStart", "gridTemplate", "gridTemplateAreas", "gridTemplateColumns", "gridTemplateRows", "hyphens", "lineBreak", "perspective", "perspectiveOrigin", "perspectiveOriginX", "perspectiveOriginY", "rubyPosition", "scrollSnapCoordinate", "scrollSnapDestination", "scrollSnapPoints", "scrollSnapPointsX", "scrollSnapPointsY", "scrollSnapType", "tabSize", "textDecoration", "textDecorationColor", "textDecorationLine", "textDecorationStyle", "textOrientation", "textSizeAdjust", "transform", "transition", "transformOrigin", "transformOriginX", "transformOriginY", "transformOriginZ", "transformStyle", "transitionProperty", "transitionDuration", "transitionTimingFunction", "transitionDelay", "userModify", "userSelect"];
 	module.exports = exports["default"];
 
 /***/ }
