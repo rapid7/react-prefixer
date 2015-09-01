@@ -1,27 +1,9 @@
 {
-  "name": "react-prefixer",
-  "version": "1.0.1",
-  "description": "Add vendor-specific prefixes to React styles",
-  "keywords": [
-    "react",
-    "prefix",
-    "css",
-    "autoprefix"
-  ],
-  "main": "lib",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rapid7/react-prefixer.git"
-  },
+  "author": "tquetano-r7",
   "bugs": {
     "url": "https://github.com/rapid7/react-prefixer/issues"
   },
-  "license": "MIT",
-  "scripts": {
-    "compile": "babel -d lib/ src/",
-    "dist": "npm run compile && webpack && webpack --config=webpack.config.minified.js",
-    "prepublish": "npm run compile"
-  },
+  "description": "Add vendor-specific prefixes to React styles",
   "devDependencies": {
     "babel": "~5.8.21",
     "babel-core": "~5.8.22",
@@ -29,6 +11,24 @@
     "lodash": "^3.10.1",
     "webpack": "~1.11.0"
   },
-  "author": "tquetano-r7",
-  "homepage": "https://github.com/rapid7/recess#readme"
+  "homepage": "https://github.com/rapid7/recess#readme",
+  "keywords": [
+    "react",
+    "prefix",
+    "css",
+    "autoprefix"
+  ],
+  "license": "MIT",
+  "main": "lib",
+  "name": "react-prefixer",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rapid7/react-prefixer.git"
+  },
+  "scripts": {
+    "compile": "babel -d lib/ src/",
+    "dist": "npm run compile && webpack && webpack --config=webpack.config.minified.js",
+    "prepublish": "npm run compile"
+  },
+  "version": "1.0.1"
 }
