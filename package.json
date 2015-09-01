@@ -13,10 +13,13 @@
   },
   "homepage": "https://github.com/rapid7/recess#readme",
   "keywords": [
-    "react",
-    "prefix",
+    "autoprefix",
+    "browser",
     "css",
-    "autoprefix"
+    "normalize",
+    "prefix",
+    "react",
+    "style"
   ],
   "license": "MIT",
   "main": "lib",
@@ -30,5 +33,5 @@
     "dist": "npm run compile && webpack && webpack --config=webpack.config.minified.js",
     "prepublish": "npm run compile"
   },
-  "version": "1.0.2"
+  "version": "1.0.3"
 }
