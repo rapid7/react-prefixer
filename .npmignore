@@ -1,2 +1,4 @@
 src/
 dist/
+webpack.config.js
+webpack.config.minified.js
