@@ -1,6 +1,6 @@
 {
   "name": "react-prefixer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Add vendor-specific prefixes to React styles",
   "keywords": [
     "react",
