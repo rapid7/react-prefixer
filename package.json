@@ -1,0 +1,27 @@
+{
+  "name": "react-prefixer",
+  "version": "1.0.0",
+  "description": "Add vendor-specific prefixes to React styles",
+  "main": "lib",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rapid7/react-prefixer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rapid7/react-prefixer/issues"
+  },
+  "license": "MIT",
+  "scripts": {
+    "compile": "babel -d lib/ src/",
+    "dist": "npm run compile && webpack && webpack --config=webpack.config.minified.js",
+    "prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "babel": "~5.8.21",
+    "babel-core": "~5.8.22",
+    "babel-loader": "~5.3.2",
+    "webpack": "~1.11.0"
+  },
+  "author": "tquetano-r7",
+  "homepage": "https://github.com/rapid7/recess#readme"
+}
