@@ -60,6 +60,5 @@ Browser support:
 * Chrome
 * Safari
 * Opera
-* 
 
 Happy prefixing!
