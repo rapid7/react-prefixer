@@ -1,5 +1,6 @@
 import prefix from "./prefix";
 import properties from "./properties";
+import animatableValues from "./animatableValues";
 
 var div = document.createElement("div");
 
