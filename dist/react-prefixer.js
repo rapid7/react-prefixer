@@ -72,6 +72,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var div = document.createElement("div");
 
+	function camelToKebab(str) {
+	    return str.replace(/\W+/g, "-").replace(/([a-z\d])([A-Z])/g, "$1-$2").toLowerCase();
+	}
+
 	function isPropertySupported(prop) {
 	    return typeof div.style[prop] === "string";
 	}
