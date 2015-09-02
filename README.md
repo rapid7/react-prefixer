@@ -1,6 +1,12 @@
 # react-prefixer
 
-react-prefixer is a tiny package designed to provide vender-specific prefixes to the style objects you use in your React project. It's usage is pretty straightforward:
+react-prefixer is a tiny package designed to provide vender-specific prefixes to the style objects you use in your React project. To install:
+
+```
+$ npm install react-prefixer
+```
+
+It's usage is pretty straightforward:
 
 ```
 var prefix = require("react-prefixer"),
