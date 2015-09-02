@@ -19,21 +19,33 @@ function isValueSupported(prop, value, defaultValue) {
 
 function applyPrefixes(obj) {
     if (typeof obj === "object" && !!obj) {
-        Object.keys(obj).forEach(function (key) {
+        Object.keys(obj).forEach(function(key) {
+            let realKey = key;
+
             if (typeof obj[key] === "object" && !!obj[key]) {
                 obj[key] = applyPrefixes(obj[key]);
             } else if (properties.indexOf(key) !== -1 && !isPropertySupported(key)) {
-                let value = obj[key],
-                    prefixedKey = prefix.js + key.charAt(0).toUpperCase() + key.slice(1);
+                let value = obj[key];
 
-                if (key === "transition") {
-                    value = value.replace(/transform/g, prefix.css + "transform");
-                }
+                realKey = prefix.js + key.charAt(0).toUpperCase() + key.slice(1);
 
                 delete obj[key];
-                obj[prefixedKey] = value;
-            } else if (key === "display" && obj[key] === "flex" && !isValueSupported("display", "flex", "block")) {
+                obj[realKey] = value;
+            }
+
+            if (key === "display" && obj[key] === "flex" && !isValueSupported("display", "flex", "block")) {
                 obj[key] = (prefix === "ms" ? "-ms-flexbox" : prefix.css + "flex");
+            }
+
+            if (key === "transition") {
+                animatableValues.forEach(function(animatableValue) {
+                    if (!isPropertySupported(animatableValue)) {
+                        var kebabValue = camelToKebab(animatableValue),
+                            re = new RegExp(kebabValue, "g");
+
+                        obj[realKey] = obj[realKey].replace(re, prefix.css + kebabValue);
+                    }
+                });
             }
         });
     }

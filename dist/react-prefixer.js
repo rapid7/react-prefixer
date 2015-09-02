@@ -89,20 +89,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	function applyPrefixes(obj) {
 	    if (typeof obj === "object" && !!obj) {
 	        Object.keys(obj).forEach(function (key) {
+	            var realKey = key;
+
 	            if (typeof obj[key] === "object" && !!obj[key]) {
 	                obj[key] = applyPrefixes(obj[key]);
 	            } else if (_properties2["default"].indexOf(key) !== -1 && !isPropertySupported(key)) {
-	                var value = obj[key],
-	                    prefixedKey = _prefix2["default"].js + key.charAt(0).toUpperCase() + key.slice(1);
+	                var value = obj[key];
 
-	                if (key === "transition") {
-	                    value = value.replace(/transform/g, _prefix2["default"].css + "transform");
-	                }
+	                realKey = _prefix2["default"].js + key.charAt(0).toUpperCase() + key.slice(1);
 
 	                delete obj[key];
-	                obj[prefixedKey] = value;
-	            } else if (key === "display" && obj[key] === "flex" && !isValueSupported("display", "flex", "block")) {
+	                obj[realKey] = value;
+	            }
+
+	            if (key === "display" && obj[key] === "flex" && !isValueSupported("display", "flex", "block")) {
 	                obj[key] = _prefix2["default"] === "ms" ? "-ms-flexbox" : _prefix2["default"].css + "flex";
+	            }
+
+	            if (key === "transition") {
+	                animatableValues.forEach(function (animatableValue) {
+	                    if (!isPropertySupported(animatableValue)) {
+	                        var kebabValue = camelToKebab(animatableValue),
+	                            re = new RegExp(kebabValue, "g");
+
+	                        obj[realKey] = obj[realKey].replace(re, _prefix2["default"].css + kebabValue);
+	                    }
+	                });
 	            }
 	        });
 	    }
