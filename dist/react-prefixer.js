@@ -74,24 +74,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _animatableValues2 = _interopRequireDefault(_animatableValues);
 
-	var div = document.createElement("div");
+	var _CssSupportsPolyfill = __webpack_require__(4);
+
+	var _CssSupportsPolyfill2 = _interopRequireDefault(_CssSupportsPolyfill);
 
 	function camelToKebab(str) {
 	    return str.replace(/\W+/g, "-").replace(/([a-z\d])([A-Z])/g, "$1-$2").toLowerCase();
-	}
-
-	function isPropertySupported(prop) {
-	    return typeof div.style[prop] === "string";
-	}
-
-	function isValueSupported(prop, value, defaultValue) {
-	    div.style[prop] = defaultValue;
-
-	    try {
-	        div.style[prop] = value;
-	    } catch (e) {}
-
-	    return div.style[prop] === value;
 	}
 
 	function applyPrefixes(obj) {
@@ -101,7 +89,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (typeof obj[key] === "object" && !!obj[key]) {
 	                obj[key] = applyPrefixes(obj[key]);
-	            } else if (_properties2["default"].indexOf(key) !== -1 && !isPropertySupported(key)) {
+	            } else if (_properties2["default"].indexOf(key) !== -1 && !(0, _CssSupportsPolyfill2["default"])(key)) {
 	                var value = obj[key];
 
 	                realKey = _prefix2["default"].js + key.charAt(0).toUpperCase() + key.slice(1);
@@ -110,13 +98,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                obj[realKey] = value;
 	            }
 
-	            if (key === "display" && obj[key] === "flex" && !isValueSupported("display", "flex", "block")) {
-	                obj[key] = _prefix2["default"] === "ms" ? "-ms-flexbox" : _prefix2["default"].css + "flex";
+	            if (realKey === "display" && obj[realKey] === "flex" && !(0, _CssSupportsPolyfill2["default"])("display", "flex")) {
+	                obj[realKey] = _prefix2["default"] === "ms" ? "-ms-flexbox" : _prefix2["default"].css + "flex";
 	            }
 
 	            if (key === "transition") {
 	                _animatableValues2["default"].forEach(function (animatableValue) {
-	                    if (!isPropertySupported(animatableValue)) {
+	                    if (!(0, _CssSupportsPolyfill2["default"])(animatableValue)) {
 	                        var kebabValue = camelToKebab(animatableValue),
 	                            re = new RegExp(kebabValue, "g");
 
@@ -178,6 +166,53 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 	exports["default"] = ["columnCount", "columnGap", "columnRule", "columnRuleColor", "columnRuleWidth", "columns", "flex", "flexBasis", "flexGrow", "flexShrink", "order", "perspective", "perspectiveOrigin", "perspectiveOriginX", "perspectiveOriginY", "scrollSnapCoordinate", "scrollSnapDirection", "textDecoration", "textDecorationColor", "transform", "transformOrigin", "transformOriginX", "transformOriginY", "transformOriginZ", "transformStyle"];
+	module.exports = exports["default"];
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var el = document.createElement("div"),
+	    camelRe = /-([a-z]|[0-9])/ig,
+	    support,
+	    camel;
+
+	exports["default"] = function (prop, value) {
+	    // If no value is supplied, use "inherit"
+	    value = arguments.length === 2 ? value : "inherit";
+
+	    // Try the native standard method first
+	    if ("CSS" in window && "supports" in window.CSS) {
+	        return window.CSS.supports(prop, value);
+	    }
+
+	    // Check Opera's native method
+	    if ("supportsCSS" in window) {
+	        return window.supportsCSS(prop, value);
+	    }
+
+	    // Convert to camel-case for DOM interactions
+	    camel = prop.replace(camelRe, function (all, letter) {
+	        return (letter + "").toUpperCase();
+	    });
+
+	    // Check if the property is supported
+	    support = camel in el.style;
+
+	    // Assign the property and value to invoke
+	    // the CSS interpreter
+	    el.style.cssText = prop + ":" + value;
+
+	    // Ensure both the property and value are
+	    // supported and return
+	    return support && el.style[camel] !== "";
+	};
+
 	module.exports = exports["default"];
 
 /***/ }
