@@ -14,7 +14,7 @@ function applyPrefixes(obj) {
 
             if (typeof obj[key] === "object" && !!obj[key]) {
                 obj[key] = applyPrefixes(obj[key]);
-            } else if (properties.indexOf(key) !== -1 && !supports(key)) {
+            } else if (properties.indexOf(key) !== -1 && !supports(camelToKebab(key))) {
                 let value = obj[key];
 
                 realKey = prefix.js + key.charAt(0).toUpperCase() + key.slice(1);
@@ -29,9 +29,10 @@ function applyPrefixes(obj) {
 
             if (key === "transition") {
                 animatableValues.forEach(function(animatableValue) {
-                    if (!supports(animatableValue)) {
-                        var kebabValue = camelToKebab(animatableValue),
-                            re = new RegExp(kebabValue, "g");
+                    let kebabValue = camelToKebab(animatableValue);
+
+                    if (!supports(kebabValue)) {
+                            let re = new RegExp(kebabValue, "g");
 
                         obj[realKey] = obj[realKey].replace(re, prefix.css + kebabValue);
                     }

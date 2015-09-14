@@ -89,7 +89,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (typeof obj[key] === "object" && !!obj[key]) {
 	                obj[key] = applyPrefixes(obj[key]);
-	            } else if (_properties2["default"].indexOf(key) !== -1 && !(0, _CssSupportsPolyfill2["default"])(key)) {
+	            } else if (_properties2["default"].indexOf(key) !== -1 && !(0, _CssSupportsPolyfill2["default"])(camelToKebab(key))) {
 	                var value = obj[key];
 
 	                realKey = _prefix2["default"].js + key.charAt(0).toUpperCase() + key.slice(1);
@@ -104,9 +104,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (key === "transition") {
 	                _animatableValues2["default"].forEach(function (animatableValue) {
-	                    if (!(0, _CssSupportsPolyfill2["default"])(animatableValue)) {
-	                        var kebabValue = camelToKebab(animatableValue),
-	                            re = new RegExp(kebabValue, "g");
+	                    var kebabValue = camelToKebab(animatableValue);
+
+	                    if (!(0, _CssSupportsPolyfill2["default"])(kebabValue)) {
+	                        var re = new RegExp(kebabValue, "g");
 
 	                        obj[realKey] = obj[realKey].replace(re, _prefix2["default"].css + kebabValue);
 	                    }
