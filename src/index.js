@@ -1,3 +1,3 @@
-export default typeof process === 'object' && process + '' === '[object process]'
+export default process.versions.node
     ? x => x
     : require('./browser')
