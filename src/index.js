@@ -24,7 +24,7 @@ function applyPrefixes(obj) {
             }
 
             if (realKey === "display" && obj[realKey] === "flex" && !supports("display", "flex")) {
-                obj[realKey] = (prefix === "ms" ? "-ms-flexbox" : prefix.css + "flex");
+                obj[realKey] = (prefix.js === "ms" ? "-ms-flexbox" : prefix.css + "flex");
             }
 
             if (key === "transition") {
