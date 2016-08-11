@@ -1,9 +1,12 @@
-var el = document.createElement("div"),
+var el,
     camelRe = /-([a-z]|[0-9])/ig,
     support,
     camel;
 
 export default function(prop, value){
+	if (!el) {
+		el  = document.createElement("div");
+	}
     // If no value is supplied, use "inherit"
     value = arguments.length === 2 ? value : "inherit";
 

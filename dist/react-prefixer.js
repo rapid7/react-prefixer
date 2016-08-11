@@ -126,24 +126,31 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 1 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	Object.defineProperty(exports, '__esModule', {
+		value: true
 	});
-	var styles = window.getComputedStyle(document.documentElement, ""),
-	    prefix = Array.prototype.slice.call(styles).join("").match(/-(moz|webkit|ms)-/)[1] || styles.OLink === "" && ["", "o"],
-	    ret = {
-	    css: "-" + prefix + "-",
-	    js: prefix
+	var ret = {
+		css: '',
+		js: ''
 	};
 
-	if (ret.js !== "ms") {
-	    ret.js = ret.js.charAt(0).toUpperCase() + ret.js.slice(1);
+	if (typeof window !== 'undefined') {
+		var styles = window.getComputedStyle(document.documentElement, ""),
+		    prefix = Array.prototype.slice.call(styles).join("").match(/-(moz|webkit|ms)-/)[1] || styles.OLink === "" && ["", "o"],
+		    ret = {
+			css: "-" + prefix + "-",
+			js: prefix
+		};
+
+		if (ret.js !== "ms") {
+			ret.js = ret.js.charAt(0).toUpperCase() + ret.js.slice(1);
+		}
 	}
 
-	exports["default"] = ret;
-	module.exports = exports["default"];
+	exports['default'] = ret;
+	module.exports = exports['default'];
 
 /***/ },
 /* 2 */
@@ -178,12 +185,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	var el = document.createElement("div"),
+	var el,
 	    camelRe = /-([a-z]|[0-9])/ig,
 	    support,
 	    camel;
 
 	exports["default"] = function (prop, value) {
+	    if (!el) {
+	        el = document.createElement("div");
+	    }
 	    // If no value is supplied, use "inherit"
 	    value = arguments.length === 2 ? value : "inherit";
 
