@@ -1,17 +1,29 @@
-var styles = window.getComputedStyle(document.documentElement, ""),
-    prefix = Array
-        .prototype
-        .slice
-        .call(styles)
-        .join("")
-        .match(/-(moz|webkit|ms)-/)[1] || (styles.OLink === "" && ["", "o"]),
-    ret = {
-        css:"-" + prefix + "-",
-        js:prefix
-    };
+let prefixObject = {
+  css: '',
+  js: ''
+};
 
-if (ret.js !== "ms") {
-    ret.js = ret.js.charAt(0).toUpperCase() + ret.js.slice(1);
+if (typeof window !== 'undefined') {
+  const styles = window.getComputedStyle(document.documentElement);
+
+  const prefixString = Array.prototype.slice.call(styles).join('');
+  const standardPrefixString = prefixString.match(/-(moz|webkit|ms)-/);
+  const operaPrefixString = prefixString.match(styles.OLink === '' && ['', 'o']);
+  const prefixMatch = standardPrefixString || operaPrefixString;
+
+  const prefix = prefixMatch ? prefixMatch[1] : '';
+
+  prefixObject = {
+    css: `-${prefix}-`,
+    js: prefix
+  };
+
+  if (prefixObject.js !== 'ms') {
+    prefixObject = {
+      ...prefixObject,
+      js: `${prefixObject.js.charAt(0).toUpperCase()}${prefixObject.js.slice(1)}`
+    };
+  }
 }
 
-export default ret;
+export default prefixObject;

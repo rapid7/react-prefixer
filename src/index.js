@@ -1,47 +1,83 @@
-import prefix from "./prefix";
-import properties from "./properties";
-import animatableValues from "./animatableValues";
-import supports from "./CssSupportsPolyfill";
+import isPlainObject from 'lodash/isPlainObject';
 
-function camelToKebab(str) {
-    return str.replace(/\W+/g, "-").replace(/([a-z\d])([A-Z])/g, "$1-$2").toLowerCase();
-}
+import prefix from './prefix';
+import isSupported from './supports';
 
-function applyPrefixes(obj) {
-    if (typeof obj === "object" && !!obj) {
-        Object.keys(obj).forEach(function(key) {
-            let realKey = key;
+import {
+  ANIMATABLE_VALUES,
+  CSS_PROPERTIES
+} from './constants';
 
-            if (typeof obj[key] === "object" && !!obj[key]) {
-                obj[key] = applyPrefixes(obj[key]);
-            } else if (properties.indexOf(key) !== -1 && !supports(camelToKebab(key))) {
-                let value = obj[key];
+const toKebabCase = (string) => {
+  return string.replace(/([A-Z])/g, ($1) => {
+    return `-${$1.toLowerCase()}`;
+  });
+};
 
-                realKey = prefix.js + key.charAt(0).toUpperCase() + key.slice(1);
+/**
+ * create a new style object with prefixes applied
+ *
+ * @param {Object} object
+ * @returns {Object}
+ */
+const applyPrefixes = (object) => {
+  if (!isPlainObject(object)) {
+    return object;
+  }
 
-                delete obj[key];
-                obj[realKey] = value;
-            }
+  let value;
 
-            if (realKey === "display" && obj[realKey] === "flex" && !supports("display", "flex")) {
-                obj[realKey] = (prefix === "ms" ? "-ms-flexbox" : prefix.css + "flex");
-            }
+  return Object.keys(object).reduce((styleObject, originalKey) => {
+    let key = originalKey;
 
-            if (key === "transition") {
-                animatableValues.forEach(function(animatableValue) {
-                    let kebabValue = camelToKebab(animatableValue);
+    value = object[key];
 
-                    if (!supports(kebabValue)) {
-                            let re = new RegExp(kebabValue, "g");
-
-                        obj[realKey] = obj[realKey].replace(re, prefix.css + kebabValue);
-                    }
-                });
-            }
-        });
+    if (isPlainObject(value)) {
+      return {
+        ...styleObject,
+        [key]: applyPrefixes(value)
+      };
     }
 
-    return obj;
-}
+    if (CSS_PROPERTIES.indexOf(key) !== -1 && !isSupported(toKebabCase(key))) {
+      key = `${prefix.js}${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+    }
+
+    if (originalKey === 'display' && object[originalKey] === 'flex' && !isSupported('display', 'flex')) {
+      return {
+        ...styleObject,
+        [key]: (prefix.js === 'ms' ? '-ms-flexbox' : `${prefix.css}flex`)
+      };
+    }
+
+    if (originalKey === 'transition') {
+      const animatableValuesObject = ANIMATABLE_VALUES.reduce((animatableValues, animatableValue) => {
+        const kebabValue = toKebabCase(animatableValue);
+        const re = new RegExp(kebabValue, 'g');
+
+        if (re.test(object[originalKey]) && !isSupported(kebabValue)) {
+          const cleanValue = object[originalKey].replace(re, `${prefix.css}${kebabValue}`);
+
+          return {
+            ...animatableValues,
+            [key]: cleanValue
+          };
+        }
+
+        return animatableValues;
+      }, {});
+
+      return {
+        ...styleObject,
+        ...animatableValuesObject
+      };
+    }
+
+    return {
+      ...styleObject,
+      [key]: value
+    };
+  }, {});
+};
 
 export default applyPrefixes;
