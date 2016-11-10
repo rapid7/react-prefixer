@@ -60,31 +60,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	var _isPlainObject = __webpack_require__(1);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _kebabCase = __webpack_require__(6);
-	
-	var _kebabCase2 = _interopRequireDefault(_kebabCase);
-	
-	var _prefix = __webpack_require__(15);
+	var _prefix = __webpack_require__(6);
 	
 	var _prefix2 = _interopRequireDefault(_prefix);
 	
-	var _supports = __webpack_require__(16);
+	var _supports = __webpack_require__(7);
 	
 	var _supports2 = _interopRequireDefault(_supports);
 	
-	var _constants = __webpack_require__(27);
+	var _constants = __webpack_require__(26);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	var toKebabCase = function toKebabCase(string) {
+	  return string.replace(/([A-Z])/g, function ($1) {
+	    return '-' + $1.toLowerCase();
+	  });
+	};
 	
 	/**
 	 * create a new style object with prefixes applied
@@ -108,7 +108,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return _extends({}, styleObject, _defineProperty({}, key, applyPrefixes(value)));
 	    }
 	
-	    if (_constants.CSS_PROPERTIES.indexOf(key) !== -1 && !(0, _supports2.default)((0, _kebabCase2.default)(key))) {
+	    if (_constants.CSS_PROPERTIES.indexOf(key) !== -1 && !(0, _supports2.default)(toKebabCase(key))) {
 	      key = '' + _prefix2.default.js + key.charAt(0).toUpperCase() + key.slice(1);
 	    }
 	
@@ -116,26 +116,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return _extends({}, styleObject, _defineProperty({}, key, _prefix2.default === 'ms' ? '-ms-flexbox' : _prefix2.default.css + 'flex'));
 	    }
 	
-	    if (key === 'transition') {
-	      var _ret = function () {
-	        var animatableValuesObject = {};
+	    if (originalKey === 'transition') {
+	      var animatableValuesObject = _constants.ANIMATABLE_VALUES.reduce(function (animatableValues, animatableValue) {
+	        var kebabValue = toKebabCase(animatableValue);
+	        var re = new RegExp(kebabValue, 'g');
 	
-	        _constants.ANIMATABLE_VALUES.forEach(function (animatableValue) {
-	          var kebabValue = (0, _kebabCase2.default)(animatableValue);
+	        if (re.test(object[originalKey]) && !(0, _supports2.default)(kebabValue)) {
+	          var cleanValue = object[originalKey].replace(re, '' + _prefix2.default.css + kebabValue);
 	
-	          if (!(0, _supports2.default)(kebabValue)) {
-	            var re = new RegExp(kebabValue, 'g');
+	          return _extends({}, animatableValues, _defineProperty({}, key, cleanValue));
+	        }
 	
-	            animatableValuesObject[key] = object[key].replace(re, '' + _prefix2.default.css + kebabValue);
-	          }
-	        });
+	        return animatableValues;
+	      }, {});
 	
-	        return {
-	          v: _extends({}, styleObject, animatableValuesObject)
-	        };
-	      }();
-	
-	      if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	      return _extends({}, styleObject, animatableValuesObject);
 	    }
 	
 	    return _extends({}, styleObject, _defineProperty({}, key, value));
@@ -311,263 +306,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var createCompounder = __webpack_require__(7);
-	
-	/**
-	 * Converts `string` to
-	 * [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 3.0.0
-	 * @category String
-	 * @param {string} [string=''] The string to convert.
-	 * @returns {string} Returns the kebab cased string.
-	 * @example
-	 *
-	 * _.kebabCase('Foo Bar');
-	 * // => 'foo-bar'
-	 *
-	 * _.kebabCase('fooBar');
-	 * // => 'foo-bar'
-	 *
-	 * _.kebabCase('__FOO_BAR__');
-	 * // => 'foo-bar'
-	 */
-	var kebabCase = createCompounder(function(result, word, index) {
-	  return result + (index ? '-' : '') + word.toLowerCase();
-	});
-	
-	module.exports = kebabCase;
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var arrayReduce = __webpack_require__(8),
-	    deburr = __webpack_require__(9),
-	    words = __webpack_require__(10);
-	
-	/** Used to compose unicode capture groups. */
-	var rsApos = "['\u2019]";
-	
-	/** Used to match apostrophes. */
-	var reApos = RegExp(rsApos, 'g');
-	
-	/**
-	 * Creates a function like `_.camelCase`.
-	 *
-	 * @private
-	 * @param {Function} callback The function to combine each word.
-	 * @returns {Function} Returns the new compounder function.
-	 */
-	function createCompounder(callback) {
-	  return function(string) {
-	    return arrayReduce(words(deburr(string).replace(reApos, '')), callback, '');
-	  };
-	}
-	
-	module.exports = createCompounder;
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	/**
-	 * A specialized version of `_.reduce` for arrays without support for
-	 * iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @param {*} [accumulator] The initial value.
-	 * @param {boolean} [initAccum] Specify using the first element of `array` as
-	 *  the initial value.
-	 * @returns {*} Returns the accumulated value.
-	 */
-	function arrayReduce(array, iteratee, accumulator, initAccum) {
-	  var index = -1,
-	      length = array == null ? 0 : array.length;
-	
-	  if (initAccum && length) {
-	    accumulator = array[++index];
-	  }
-	  while (++index < length) {
-	    accumulator = iteratee(accumulator, array[index], index, array);
-	  }
-	  return accumulator;
-	}
-	
-	module.exports = arrayReduce;
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	/**
-	 * This method returns the first argument it receives.
-	 *
-	 * @static
-	 * @since 0.1.0
-	 * @memberOf _
-	 * @category Util
-	 * @param {*} value Any value.
-	 * @returns {*} Returns `value`.
-	 * @example
-	 *
-	 * var object = { 'a': 1 };
-	 *
-	 * console.log(_.identity(object) === object);
-	 * // => true
-	 */
-	function identity(value) {
-	  return value;
-	}
-	
-	module.exports = identity;
-
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var asciiWords = __webpack_require__(11),
-	    hasUnicodeWord = __webpack_require__(12),
-	    toString = __webpack_require__(13),
-	    unicodeWords = __webpack_require__(14);
-	
-	/**
-	 * Splits `string` into an array of its words.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 3.0.0
-	 * @category String
-	 * @param {string} [string=''] The string to inspect.
-	 * @param {RegExp|string} [pattern] The pattern to match words.
-	 * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-	 * @returns {Array} Returns the words of `string`.
-	 * @example
-	 *
-	 * _.words('fred, barney, & pebbles');
-	 * // => ['fred', 'barney', 'pebbles']
-	 *
-	 * _.words('fred, barney, & pebbles', /[^, ]+/g);
-	 * // => ['fred', 'barney', '&', 'pebbles']
-	 */
-	function words(string, pattern, guard) {
-	  string = toString(string);
-	  pattern = guard ? undefined : pattern;
-	
-	  if (pattern === undefined) {
-	    return hasUnicodeWord(string) ? unicodeWords(string) : asciiWords(string);
-	  }
-	  return string.match(pattern) || [];
-	}
-	
-	module.exports = words;
-
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	/** Used to match words composed of alphanumeric characters. */
-	var reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
-	
-	/**
-	 * Splits an ASCII `string` into an array of its words.
-	 *
-	 * @private
-	 * @param {string} The string to inspect.
-	 * @returns {Array} Returns the words of `string`.
-	 */
-	function asciiWords(string) {
-	  return string.match(reAsciiWord) || [];
-	}
-	
-	module.exports = asciiWords;
-
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	/**
-	 * This method returns `false`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.13.0
-	 * @category Util
-	 * @returns {boolean} Returns `false`.
-	 * @example
-	 *
-	 * _.times(2, _.stubFalse);
-	 * // => [false, false]
-	 */
-	function stubFalse() {
-	  return false;
-	}
-	
-	module.exports = stubFalse;
-
-
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
-
-	/**
-	 * This method returns the first argument it receives.
-	 *
-	 * @static
-	 * @since 0.1.0
-	 * @memberOf _
-	 * @category Util
-	 * @param {*} value Any value.
-	 * @returns {*} Returns `value`.
-	 * @example
-	 *
-	 * var object = { 'a': 1 };
-	 *
-	 * console.log(_.identity(object) === object);
-	 * // => true
-	 */
-	function identity(value) {
-	  return value;
-	}
-	
-	module.exports = identity;
-
-
-/***/ },
-/* 14 */
-/***/ function(module, exports) {
-
-	/** Used to match words composed of alphanumeric characters. */
-	var reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
-	
-	/**
-	 * Splits an ASCII `string` into an array of its words.
-	 *
-	 * @private
-	 * @param {string} The string to inspect.
-	 * @returns {Array} Returns the words of `string`.
-	 */
-	function asciiWords(string) {
-	  return string.match(reAsciiWord) || [];
-	}
-	
-	module.exports = asciiWords;
-
-
-/***/ },
-/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -588,7 +326,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var PREFIX = PREFIX_MATCH ? PREFIX_MATCH[1] : '';
 	
 	var prefixObject = {
-	  css: '' + PREFIX,
+	  css: '-' + PREFIX + '-',
 	  js: PREFIX
 	};
 	
@@ -602,7 +340,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 16 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -611,7 +349,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _camelCase = __webpack_require__(17);
+	var _camelCase = __webpack_require__(8);
 	
 	var _camelCase2 = _interopRequireDefault(_camelCase);
 	
@@ -636,29 +374,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  // Convert to camel-case for DOM interactions
-	  var camel = (0, _camelCase2.default)(property);
+	  var camelCaseProperty = (0, _camelCase2.default)(property);
 	
 	  // Check if the property is supported
 	  var element = document.createElement('div');
-	  var support = camel in element.style;
+	  var support = camelCaseProperty in element.style;
 	
 	  // Assign the property and value to invoke the CSS interpreter
 	  element.style.cssText = property + ':' + value;
 	
 	  // Ensure both the property and value are
 	  // supported and return
-	  return support && element.style[camel] !== '';
+	  return support && element.style[camelCaseProperty] !== '';
 	};
 	
 	exports.default = isSupported;
 	module.exports = exports['default'];
 
 /***/ },
-/* 17 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var capitalize = __webpack_require__(18),
-	    createCompounder = __webpack_require__(7);
+	var capitalize = __webpack_require__(9),
+	    createCompounder = __webpack_require__(19);
 	
 	/**
 	 * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).
@@ -689,11 +427,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 18 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var toString = __webpack_require__(13),
-	    upperFirst = __webpack_require__(19);
+	var toString = __webpack_require__(10),
+	    upperFirst = __webpack_require__(11);
 	
 	/**
 	 * Converts the first character of `string` to upper case and the remaining
@@ -718,10 +456,37 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 19 */
+/* 10 */
+/***/ function(module, exports) {
+
+	/**
+	 * This method returns the first argument it receives.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Util
+	 * @param {*} value Any value.
+	 * @returns {*} Returns `value`.
+	 * @example
+	 *
+	 * var object = { 'a': 1 };
+	 *
+	 * console.log(_.identity(object) === object);
+	 * // => true
+	 */
+	function identity(value) {
+	  return value;
+	}
+	
+	module.exports = identity;
+
+
+/***/ },
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var createCaseFirst = __webpack_require__(20);
+	var createCaseFirst = __webpack_require__(12);
 	
 	/**
 	 * Converts the first character of `string` to upper case.
@@ -746,13 +511,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 20 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var castSlice = __webpack_require__(21),
-	    hasUnicode = __webpack_require__(23),
-	    stringToArray = __webpack_require__(24),
-	    toString = __webpack_require__(13);
+	var castSlice = __webpack_require__(13),
+	    hasUnicode = __webpack_require__(15),
+	    stringToArray = __webpack_require__(16),
+	    toString = __webpack_require__(10);
 	
 	/**
 	 * Creates a function like `_.lowerFirst`.
@@ -785,10 +550,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 21 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseSlice = __webpack_require__(22);
+	var baseSlice = __webpack_require__(14);
 	
 	/**
 	 * Casts `array` to a slice if it's needed.
@@ -809,7 +574,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 22 */
+/* 14 */
 /***/ function(module, exports) {
 
 	/**
@@ -846,7 +611,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 23 */
+/* 15 */
 /***/ function(module, exports) {
 
 	/**
@@ -870,12 +635,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 24 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var asciiToArray = __webpack_require__(25),
-	    hasUnicode = __webpack_require__(23),
-	    unicodeToArray = __webpack_require__(26);
+	var asciiToArray = __webpack_require__(17),
+	    hasUnicode = __webpack_require__(15),
+	    unicodeToArray = __webpack_require__(18);
 	
 	/**
 	 * Converts `string` to an array.
@@ -894,7 +659,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 25 */
+/* 17 */
 /***/ function(module, exports) {
 
 	/**
@@ -909,28 +674,224 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	module.exports = asciiToArray;
+
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	/**
+	 * Converts an ASCII `string` to an array.
+	 *
+	 * @private
+	 * @param {string} string The string to convert.
+	 * @returns {Array} Returns the converted array.
+	 */
+	function asciiToArray(string) {
+	  return string.split('');
+	}
+	
+	module.exports = asciiToArray;
+
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var arrayReduce = __webpack_require__(20),
+	    deburr = __webpack_require__(21),
+	    words = __webpack_require__(22);
+	
+	/** Used to compose unicode capture groups. */
+	var rsApos = "['\u2019]";
+	
+	/** Used to match apostrophes. */
+	var reApos = RegExp(rsApos, 'g');
+	
+	/**
+	 * Creates a function like `_.camelCase`.
+	 *
+	 * @private
+	 * @param {Function} callback The function to combine each word.
+	 * @returns {Function} Returns the new compounder function.
+	 */
+	function createCompounder(callback) {
+	  return function(string) {
+	    return arrayReduce(words(deburr(string).replace(reApos, '')), callback, '');
+	  };
+	}
+	
+	module.exports = createCompounder;
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports) {
+
+	/**
+	 * A specialized version of `_.reduce` for arrays without support for
+	 * iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @param {*} [accumulator] The initial value.
+	 * @param {boolean} [initAccum] Specify using the first element of `array` as
+	 *  the initial value.
+	 * @returns {*} Returns the accumulated value.
+	 */
+	function arrayReduce(array, iteratee, accumulator, initAccum) {
+	  var index = -1,
+	      length = array == null ? 0 : array.length;
+	
+	  if (initAccum && length) {
+	    accumulator = array[++index];
+	  }
+	  while (++index < length) {
+	    accumulator = iteratee(accumulator, array[index], index, array);
+	  }
+	  return accumulator;
+	}
+	
+	module.exports = arrayReduce;
+
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	/**
+	 * This method returns the first argument it receives.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Util
+	 * @param {*} value Any value.
+	 * @returns {*} Returns `value`.
+	 * @example
+	 *
+	 * var object = { 'a': 1 };
+	 *
+	 * console.log(_.identity(object) === object);
+	 * // => true
+	 */
+	function identity(value) {
+	  return value;
+	}
+	
+	module.exports = identity;
+
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var asciiWords = __webpack_require__(23),
+	    hasUnicodeWord = __webpack_require__(24),
+	    toString = __webpack_require__(10),
+	    unicodeWords = __webpack_require__(25);
+	
+	/**
+	 * Splits `string` into an array of its words.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 3.0.0
+	 * @category String
+	 * @param {string} [string=''] The string to inspect.
+	 * @param {RegExp|string} [pattern] The pattern to match words.
+	 * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
+	 * @returns {Array} Returns the words of `string`.
+	 * @example
+	 *
+	 * _.words('fred, barney, & pebbles');
+	 * // => ['fred', 'barney', 'pebbles']
+	 *
+	 * _.words('fred, barney, & pebbles', /[^, ]+/g);
+	 * // => ['fred', 'barney', '&', 'pebbles']
+	 */
+	function words(string, pattern, guard) {
+	  string = toString(string);
+	  pattern = guard ? undefined : pattern;
+	
+	  if (pattern === undefined) {
+	    return hasUnicodeWord(string) ? unicodeWords(string) : asciiWords(string);
+	  }
+	  return string.match(pattern) || [];
+	}
+	
+	module.exports = words;
+
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	/** Used to match words composed of alphanumeric characters. */
+	var reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
+	
+	/**
+	 * Splits an ASCII `string` into an array of its words.
+	 *
+	 * @private
+	 * @param {string} The string to inspect.
+	 * @returns {Array} Returns the words of `string`.
+	 */
+	function asciiWords(string) {
+	  return string.match(reAsciiWord) || [];
+	}
+	
+	module.exports = asciiWords;
+
+
+/***/ },
+/* 24 */
+/***/ function(module, exports) {
+
+	/**
+	 * This method returns `false`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.13.0
+	 * @category Util
+	 * @returns {boolean} Returns `false`.
+	 * @example
+	 *
+	 * _.times(2, _.stubFalse);
+	 * // => [false, false]
+	 */
+	function stubFalse() {
+	  return false;
+	}
+	
+	module.exports = stubFalse;
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports) {
+
+	/** Used to match words composed of alphanumeric characters. */
+	var reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
+	
+	/**
+	 * Splits an ASCII `string` into an array of its words.
+	 *
+	 * @private
+	 * @param {string} The string to inspect.
+	 * @returns {Array} Returns the words of `string`.
+	 */
+	function asciiWords(string) {
+	  return string.match(reAsciiWord) || [];
+	}
+	
+	module.exports = asciiWords;
 
 
 /***/ },
 /* 26 */
-/***/ function(module, exports) {
-
-	/**
-	 * Converts an ASCII `string` to an array.
-	 *
-	 * @private
-	 * @param {string} string The string to convert.
-	 * @returns {Array} Returns the converted array.
-	 */
-	function asciiToArray(string) {
-	  return string.split('');
-	}
-	
-	module.exports = asciiToArray;
-
-
-/***/ },
-/* 27 */
 /***/ function(module, exports) {
 
 	'use strict';

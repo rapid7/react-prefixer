@@ -19,18 +19,18 @@ const isSupported = (property, value) => {
   }
 
   // Convert to camel-case for DOM interactions
-  const camel = camelCase(property);
+  const camelCaseProperty = camelCase(property);
 
   // Check if the property is supported
   const element = document.createElement('div');
-  const support = (camel in element.style);
+  const support = (camelCaseProperty in element.style);
 
   // Assign the property and value to invoke the CSS interpreter
   element.style.cssText = `${property}:${value}`;
 
   // Ensure both the property and value are
   // supported and return
-  return support && (element.style[camel] !== '');
+  return support && (element.style[camelCaseProperty] !== '');
 };
 
 export default isSupported;

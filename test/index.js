@@ -16,6 +16,18 @@ test('if applyPrefixes works for basic styles', (t) => {
   });
 });
 
+test('if applyPrefixes works for transition styles', (t) => {
+  const styles = {
+    transition: 'column-count 200ms'
+  };
+
+  const result = applyPrefixes(styles);
+
+  t.deepEqual(result, {
+    WebkitTransition: '-webkit-column-count 200ms'
+  });
+});
+
 test('if applyPrefixes works for nested styles', (t) => {
   const styles = {
     appearance: 'none',

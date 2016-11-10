@@ -9,8 +9,13 @@ const styles = prefix({
   button: {
     appearance: 'none',
     display: 'block'
+  },
+  container: {
+    transition: 'column-count 200ms'
   }
 });
+
+console.log(styles.container);
 
 const App = () => {
   return (

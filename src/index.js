@@ -1,5 +1,4 @@
 import isPlainObject from 'lodash/isPlainObject';
-import kebabCase from 'lodash/kebabCase';
 
 import prefix from './prefix';
 import isSupported from './supports';
@@ -8,6 +7,12 @@ import {
   ANIMATABLE_VALUES,
   CSS_PROPERTIES
 } from './constants';
+
+const toKebabCase = (string) => {
+  return string.replace(/([A-Z])/g, ($1) => {
+    return `-${$1.toLowerCase()}`;
+  });
+};
 
 /**
  * create a new style object with prefixes applied
@@ -34,7 +39,7 @@ const applyPrefixes = (object) => {
       };
     }
 
-    if (CSS_PROPERTIES.indexOf(key) !== -1 && !isSupported(kebabCase(key))) {
+    if (CSS_PROPERTIES.indexOf(key) !== -1 && !isSupported(toKebabCase(key))) {
       key = `${prefix.js}${key.charAt(0).toUpperCase()}${key.slice(1)}`;
     }
 
@@ -45,18 +50,22 @@ const applyPrefixes = (object) => {
       };
     }
 
-    if (key === 'transition') {
-      let animatableValuesObject = {};
+    if (originalKey === 'transition') {
+      const animatableValuesObject = ANIMATABLE_VALUES.reduce((animatableValues, animatableValue) => {
+        const kebabValue = toKebabCase(animatableValue);
+        const re = new RegExp(kebabValue, 'g');
 
-      ANIMATABLE_VALUES.forEach((animatableValue) => {
-        let kebabValue = kebabCase(animatableValue);
+        if (re.test(object[originalKey]) && !isSupported(kebabValue)) {
+          const cleanValue = object[originalKey].replace(re, `${prefix.css}${kebabValue}`);
 
-        if (!isSupported(kebabValue)) {
-          let re = new RegExp(kebabValue, 'g');
-
-          animatableValuesObject[key] = object[key].replace(re, `${prefix.css}${kebabValue}`);
+          return {
+            ...animatableValues,
+            [key]: cleanValue
+          };
         }
-      });
+
+        return animatableValues;
+      }, {});
 
       return {
         ...styleObject,

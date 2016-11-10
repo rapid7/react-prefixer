@@ -8,7 +8,7 @@ const PREFIX_MATCH = STANDARD_PREFIX_MATCH || OPERA_PREFIX_MATCH;
 const PREFIX = PREFIX_MATCH ? PREFIX_MATCH[1] : '';
 
 let prefixObject = {
-  css: `${PREFIX}`,
+  css: `-${PREFIX}-`,
   js: PREFIX
 };
 
