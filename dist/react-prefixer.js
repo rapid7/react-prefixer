@@ -113,7 +113,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    if (originalKey === 'display' && object[originalKey] === 'flex' && !(0, _supports2.default)('display', 'flex')) {
-	      return _extends({}, styleObject, _defineProperty({}, key, _prefix2.default === 'ms' ? '-ms-flexbox' : _prefix2.default.css + 'flex'));
+	      return _extends({}, styleObject, _defineProperty({}, key, _prefix2.default.js === 'ms' ? '-ms-flexbox' : _prefix2.default.css + 'flex'));
 	    }
 	
 	    if (originalKey === 'transition') {
@@ -316,24 +316,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var STYLES = window.getComputedStyle(document.documentElement);
-	
-	var PREFIX_STRING = Array.prototype.slice.call(STYLES).join('');
-	var STANDARD_PREFIX_MATCH = PREFIX_STRING.match(/-(moz|webkit|ms)-/);
-	var OPERA_PREFIX_MATCH = PREFIX_STRING.match(STYLES.OLink === '' && ['', 'o']);
-	var PREFIX_MATCH = STANDARD_PREFIX_MATCH || OPERA_PREFIX_MATCH;
-	
-	var PREFIX = PREFIX_MATCH ? PREFIX_MATCH[1] : '';
-	
 	var prefixObject = {
-	  css: '-' + PREFIX + '-',
-	  js: PREFIX
+	  css: '',
+	  js: ''
 	};
 	
-	if (prefixObject.js !== 'ms') {
-	  prefixObject = _extends({}, prefixObject, {
-	    js: '' + prefixObject.js.charAt(0).toUpperCase() + prefixObject.js.slice(1)
-	  });
+	if (typeof window !== 'undefined') {
+	  var styles = window.getComputedStyle(document.documentElement);
+	
+	  var prefixString = Array.prototype.slice.call(styles).join('');
+	  var standardPrefixString = prefixString.match(/-(moz|webkit|ms)-/);
+	  var operaPrefixString = prefixString.match(styles.OLink === '' && ['', 'o']);
+	  var prefixMatch = standardPrefixString || operaPrefixString;
+	
+	  var prefix = prefixMatch ? prefixMatch[1] : '';
+	
+	  prefixObject = {
+	    css: '-' + prefix + '-',
+	    js: prefix
+	  };
+	
+	  if (prefixObject.js !== 'ms') {
+	    prefixObject = _extends({}, prefixObject, {
+	      js: '' + prefixObject.js.charAt(0).toUpperCase() + prefixObject.js.slice(1)
+	    });
+	  }
 	}
 	
 	exports.default = prefixObject;

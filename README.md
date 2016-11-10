@@ -2,6 +2,12 @@
 
 react-prefixer is a tiny package designed to provide vender-specific prefixes to the style objects you use in your React project.
 
+#### Table of contents
+* [Installation](#installation)
+* [Usage](#usage)
+* [Test environments](#test-environments)
+* [Development](#development)
+
 #### Installation
 
 ```
@@ -64,6 +70,22 @@ const styles = prefix({
 console.log(styles); 
 // {display: '-webkit-flex'}, if on Safari
 // {display: '-ms-flexbox'}, if on IE10
+```
+
+#### Test environments
+
+When running in test environments where there is a JS-based DOM (`jsdom` for example), the `getComputedStyle` method will return an empty array of styles when calculating the prefix. This previously caused an error which is since resolved, however it will default to assuming no browser prefix at all. As such, if you want to perform tests based on a specific browser prefix, you will need to mock the `getComputedStyle` property on the `window`. An example that is for tests with Webkit browsers:
+
+```javascript
+const originalGetComputedStyle = window.getComputedStyle;
+
+window.getComputedStyle = function(...args) {
+  if (arguments[0] === document.documentElement) {
+    return ['-webkit-appearance'];
+  }
+
+  return originalGetComputedStyle.apply(window, args);
+};
 ```
 
 Browser support:

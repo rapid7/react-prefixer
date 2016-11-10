@@ -46,7 +46,7 @@ const applyPrefixes = (object) => {
     if (originalKey === 'display' && object[originalKey] === 'flex' && !isSupported('display', 'flex')) {
       return {
         ...styleObject,
-        [key]: (prefix === 'ms' ? '-ms-flexbox' : `${prefix.css}flex`)
+        [key]: (prefix.js === 'ms' ? '-ms-flexbox' : `${prefix.css}flex`)
       };
     }
 

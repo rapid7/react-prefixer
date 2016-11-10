@@ -1,22 +1,29 @@
-const STYLES = window.getComputedStyle(document.documentElement);
-
-const PREFIX_STRING = Array.prototype.slice.call(STYLES).join('');
-const STANDARD_PREFIX_MATCH = PREFIX_STRING.match(/-(moz|webkit|ms)-/);
-const OPERA_PREFIX_MATCH = PREFIX_STRING.match(STYLES.OLink === '' && ['', 'o']);
-const PREFIX_MATCH = STANDARD_PREFIX_MATCH || OPERA_PREFIX_MATCH;
-
-const PREFIX = PREFIX_MATCH ? PREFIX_MATCH[1] : '';
-
 let prefixObject = {
-  css: `-${PREFIX}-`,
-  js: PREFIX
+  css: '',
+  js: ''
 };
 
-if (prefixObject.js !== 'ms') {
+if (typeof window !== 'undefined') {
+  const styles = window.getComputedStyle(document.documentElement);
+
+  const prefixString = Array.prototype.slice.call(styles).join('');
+  const standardPrefixString = prefixString.match(/-(moz|webkit|ms)-/);
+  const operaPrefixString = prefixString.match(styles.OLink === '' && ['', 'o']);
+  const prefixMatch = standardPrefixString || operaPrefixString;
+
+  const prefix = prefixMatch ? prefixMatch[1] : '';
+
   prefixObject = {
-    ...prefixObject,
-    js: `${prefixObject.js.charAt(0).toUpperCase()}${prefixObject.js.slice(1)}`
+    css: `-${prefix}-`,
+    js: prefix
   };
+
+  if (prefixObject.js !== 'ms') {
+    prefixObject = {
+      ...prefixObject,
+      js: `${prefixObject.js.charAt(0).toUpperCase()}${prefixObject.js.slice(1)}`
+    };
+  }
 }
 
 export default prefixObject;
