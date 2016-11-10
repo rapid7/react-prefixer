@@ -6,6 +6,7 @@ react-prefixer is a tiny package designed to provide vender-specific prefixes to
 * [Installation](#installation)
 * [Usage](#usage)
 * [Test environments](#test-environments)
+* [Browser support](#browser-support)
 * [Development](#development)
 
 #### Installation
@@ -88,7 +89,8 @@ window.getComputedStyle = function(...args) {
 };
 ```
 
-Browser support:
+#### Browser support
+
 * IE10+ and Edge
 * Firefox
 * Chrome
