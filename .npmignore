@@ -1,4 +1,9 @@
-src/
-dist/
+DEV_ONLY
+src
+test
+.babelrc
+.eslintrc
+.gitignore
+webpack.config.dev.js
 webpack.config.js
 webpack.config.minified.js
