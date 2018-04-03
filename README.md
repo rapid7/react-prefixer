@@ -1,5 +1,11 @@
 # react-prefixer
 
+**NOTE**: This library is no longer maintained. It is advised you use one of the many, many CSS-in-JS libraries that exist in today's ecosystem. Examples:
+
+* [styled-components](https://github.com/styled-components/styled-components)
+* [glamor](https://github.com/threepointone/glamor)
+* [radium](https://github.com/FormidableLabs/radium)
+
 react-prefixer is a tiny package designed to provide vender-specific prefixes to the style objects you use in your React project.
 
 #### Table of contents
