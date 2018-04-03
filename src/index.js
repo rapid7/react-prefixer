@@ -39,7 +39,7 @@ const applyPrefixes = (object) => {
       };
     }
 
-    if (CSS_PROPERTIES.indexOf(key) !== -1 && !isSupported(toKebabCase(key))) {
+    if (CSS_PROPERTIES.indexOf(key) !== -1 && !isSupported(toKebabCase(key), value)) {
       key = `${prefix.js}${key.charAt(0).toUpperCase()}${key.slice(1)}`;
     }
 

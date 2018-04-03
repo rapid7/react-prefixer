@@ -108,7 +108,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return _extends({}, styleObject, _defineProperty({}, key, applyPrefixes(value)));
 	    }
 	
-	    if (_constants.CSS_PROPERTIES.indexOf(key) !== -1 && !(0, _supports2.default)(toKebabCase(key))) {
+	    if (_constants.CSS_PROPERTIES.indexOf(key) !== -1 && !(0, _supports2.default)(toKebabCase(key), value)) {
 	      key = '' + _prefix2.default.js + key.charAt(0).toUpperCase() + key.slice(1);
 	    }
 	
